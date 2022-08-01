@@ -20,8 +20,6 @@ public class GUIListArgs {
     public float compensation;
 }
 
-public delegate void SetPage(int select);
-public delegate void CallMethod();
 public static class Extension {
     public static void Display(this Text display, string value) {
         display.text = value;

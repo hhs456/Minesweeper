@@ -9,11 +9,7 @@ public class MinesManager : MonoBehaviour
     public bool enableDefaultEffect;
     public Text flagDisplay;
     public int FlagCount { get; set; }
-    public int SweepCount { get; set; }
-    public NineBlock RoundScan { get; private set; }
-    public NineBlock RoundStep { get; private set; }
-    public NineBlock RoundView { get; private set; }
-    public NineBlock RoundRest { get; private set; }
+    public int SweepCount { get; set; }    
 
     public MineBlock[] mineBlocks;
     public int[] minesPosition;
@@ -21,33 +17,19 @@ public class MinesManager : MonoBehaviour
 
     public int Row { get; set; }
     public int Column{ get; set; }
-
-    NineBlock minesCountRaise;
+    
 
     // Start is called before the first frame update
     public void Initial() {
         Timer.Start();
-        GameEvent.RoundScan += OnRoundScan;
-        GameEvent.RoundStep += OnRoundStep;
-        GameEvent.RoundView += OnRoundView;
-        GameEvent.RoundRest += OnRoundRest;
-        GameEvent.Boom += ShowAllMines;
-        RoundScan = new NineBlock(Scan);
-        RoundStep = new NineBlock(Step);
-        RoundView = new NineBlock(View);
-        RoundRest = new NineBlock(Rest);
-        mineBlocks = new MineBlock[transform.childCount];
+        PlayEvent.RoundScan += OnRoundScan;
+        PlayEvent.RoundStep += OnRoundStep;
+        PlayEvent.RoundView += OnRoundView;
+        PlayEvent.RoundRest += OnRoundRest;
+        PlayEvent.Boom += ShowAllMines;
+        mineBlocks = new MineBlock[transform.childCount];        
+        new PlayArea(Row, Column);
         Begin(true);
-    }
-
-    public void SetRow(int row) {
-        Row = row;
-        GameInfos.SetStageBound(row, Column);
-    }
-
-    public void SetColumn(int column) {
-        Column = column;
-        GameInfos.SetStageBound(Row, column);
     }
 
     public void ResetFlag() {
@@ -56,8 +38,7 @@ public class MinesManager : MonoBehaviour
     }
 
     public void Begin(bool isInitial) {
-        GameInfos.SetStageBound(Row, Column);
-        minesCountRaise = new NineBlock(Row, Column, MinesCountRaise);
+        PlayArea.Instance.SetStageBound(Row, Column);        
         minesPosition = new int[MinesCount];
         int blockCount = Row * Column;
         for (int i = 0; i < mineBlocks.Length; i++) {
@@ -95,18 +76,18 @@ public class MinesManager : MonoBehaviour
     }
 
     private void OnRoundStep(object sender, int e) {
-        RoundStep.Invoke(e);
+        PlayArea.Process.Invoke(e, Step);
     }
 
     private void OnRoundScan(object sender, int e) {
-        RoundScan.Invoke(e);
+        PlayArea.Process.Invoke(e, Scan);
     }
 
     private void OnRoundView(object sender, int e) {
-        RoundView.Invoke(e);
+        PlayArea.Process.Invoke(e, View);
     }
     private void OnRoundRest(object sender, int e) {
-        RoundRest.Invoke(e);
+        PlayArea.Process.Invoke(e, Rest);
     }
 
     void SetMinesAt(int i) {
@@ -118,7 +99,7 @@ public class MinesManager : MonoBehaviour
         }
         else {
             mineBlocks[minesPosition[i]].args.hasMine = true;
-            minesCountRaise.Invoke(minesPosition[i]);
+            PlayArea.Process.Invoke(minesPosition[i], MinesCountRaise);
             SetMinesAt(i + 1);
         }
     }

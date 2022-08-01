@@ -3,42 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void IntProccess(int i); 
-
 public struct NineBlock {
 
-    private event IntProccess Behaviour;
-    public NineBlock(IntProccess behaviour) {
-        Behaviour = behaviour;
-    }
+    private Action<int> Behaviour;
 
-    public NineBlock(int row, int column, IntProccess behaviour) {
-        GameInfos.Row = row;
-        GameInfos.Column = column;
+    public void Invoke(int center, Action<int> behaviour) {
         Behaviour = behaviour;
-    }
-
-    public void Invoke(int center) {
         ScanHorizontal(center);
         ScanVertical(center);
     }
 
     void ScanHorizontal(int center) {
-        if (center % GameInfos.Column != 0) {
-            Behaviour.Invoke(center - 1);
-            ScanVertical(center - 1);
+        if (center % PlayArea.Instance.Column != 0) {
+            Behaviour.Invoke(center - 1);            
         }
-        if (center % GameInfos.Column != GameInfos.Column - 1) {
-            Behaviour.Invoke(center + 1);
-            ScanVertical(center + 1);
+        if (center % PlayArea.Instance.Column != PlayArea.Instance.Column - 1) {
+            Behaviour.Invoke(center + 1);            
         }
     }
     void ScanVertical(int center) {
-        if (center / GameInfos.Column > 0) {
-            Behaviour.Invoke(center - GameInfos.Column);
+        if (center / PlayArea.Instance.Column > 0) {
+            int target = center - PlayArea.Instance.Column;
+            Behaviour.Invoke(target);
+            ScanHorizontal(target);
         }
-        if (center / GameInfos.Column < GameInfos.Row - 1) {
-            Behaviour?.Invoke(center + GameInfos.Column);
+        if (center / PlayArea.Instance.Column < PlayArea.Instance.Row - 1) {
+            int target = center + PlayArea.Instance.Column;
+            Behaviour?.Invoke(target);
+            ScanHorizontal(target);
         }
     }
 }

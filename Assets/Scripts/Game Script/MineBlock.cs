@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,16 +30,16 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
     private Text text;
     private Color origin;
 
-    public CallMethod ResetEffect;
-    public CallMethod SweepEffect;
-    public CallMethod HoverEffect;
-    public CallMethod OriginEffect;
-    public CallMethod DisplayEffect;
-    public CallMethod SetFlagEffect;
-    public CallMethod DelFlagEffect;
-    public CallMethod BoomEffect;
-    public CallMethod FailEffect;
-    public CallMethod WrongEffect;
+    public Action ResetEffect;
+    public Action SweepEffect;
+    public Action HoverEffect;
+    public Action OriginEffect;
+    public Action DisplayEffect;
+    public Action SetFlagEffect;
+    public Action DelFlagEffect;
+    public Action BoomEffect;
+    public Action FailEffect;
+    public Action WrongEffect;
     public MineArgs args;
 
     #region # Initial Block
@@ -125,7 +126,7 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
         if (args.minesCount > 0)
             text.enabled = true;
         else
-            GameEvent.OnRoundScan(this, args.index);        
+            PlayEvent.OnRoundScan(this, args.index);        
     }
 
     public void Step() {        
@@ -155,7 +156,7 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
     }
 
     void SetFlag(bool setup) {
-        Debug.Log("Flag " + GameInfos.GetPositionOf(args.index));
+        Debug.Log("Flag " + PlayArea.Instance.GetPositionOf(args.index));
         if (args.hasSweep)
             return;
         args.hasFlag = setup;
@@ -191,7 +192,7 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
 
     #region # Mouse Event
     public void OnPointerClick(PointerEventData eventData) {
-        Debug.Log("Trigger " + GameInfos.GetPositionOf(args.index));
+        Debug.Log("Trigger " + PlayArea.Instance.GetPositionOf(args.index));
         if (Input.GetMouseButtonUp(1)) {
             isRightDown = false;
             SetFlag(!args.hasFlag);
@@ -200,7 +201,7 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
             isLeftDown = false;
             Step();
             if (isRightDown)
-                GameEvent.OnRoundStep(this, args.index);
+                PlayEvent.OnRoundStep(this, args.index);
         }
     }
 
@@ -212,7 +213,7 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
             isRightDown = true;
         }
         if (isLeftDown && isRightDown)
-            GameEvent.OnRoundView(this, args.index);
+            PlayEvent.OnRoundView(this, args.index);
     }
     public void OnPointerUp(PointerEventData eventData) {
         if (Input.GetMouseButtonUp(0)) {            
@@ -222,7 +223,7 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
             isRightDown = false;
         }
         if (!(isLeftDown && isRightDown))
-            GameEvent.OnRoundRest(this, args.index);
+            PlayEvent.OnRoundRest(this, args.index);
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -231,7 +232,7 @@ public class MineBlock : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
 
     public void OnPointerExit(PointerEventData eventData) {
         OriginEffect();
-        GameEvent.OnRoundRest(this, args.index);
+        PlayEvent.OnRoundRest(this, args.index);
     }
     #endregion
 }

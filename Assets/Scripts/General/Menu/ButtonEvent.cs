@@ -25,7 +25,7 @@ public class ButtonEvent : MonoBehaviour, IPointerClickHandler
     public bool setToInitial = false;
     public ButtonGroup initialTarget;
 
-    protected CallMethod[] Reset;
+    protected System.Action[] Reset;
 
     public ButtonGroup Master {
         get {            

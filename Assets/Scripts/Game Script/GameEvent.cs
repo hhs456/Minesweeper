@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class GameEvent
+public static class PlayEvent
 {
     public static event EventHandler<int> RoundStep;
     public static event EventHandler<int> RoundScan;
