@@ -13,16 +13,13 @@ public static class Timer {
     public static event EventHandler<bool> Pause;    
     public static Watch watch = new Watch();
 
-    public static void OnCentiSecond(object sender, Watch e) {
-        CentiSecond?.Invoke(sender, e);       
-    }
-
     public static void Update(GameClock executor) {     
         watch.playTime = AudioSettings.dspTime - watch.startTime - watch.pauesTime;
         watch.minute = (int)(watch.playTime / 60f);
         watch.second = (int) watch.playTime - watch.minute * 60;
-        watch.centiSecond = (int)(watch.playTime * 100f % 100f);        
-        OnCentiSecond(executor, watch);
+        watch.centiSecond = (int)(watch.playTime * 100f % 100f);
+
+        CentiSecond?.Invoke(executor, watch);        
     }
 
     public static void OnPause(object sender, bool isPause) {        

@@ -12,7 +12,7 @@ public struct NineBlock {
         ScanHorizontal(center);
         ScanVertical(center);
     }
-
+    ///
     void ScanHorizontal(int center) {
         if (center % PlayArea.Instance.Column != 0) {
             Behaviour.Invoke(center - 1);            
@@ -24,7 +24,7 @@ public struct NineBlock {
     void ScanVertical(int center) {
         if (center / PlayArea.Instance.Column > 0) {
             int target = center - PlayArea.Instance.Column;
-            Behaviour.Invoke(target);
+            Behaviour?.Invoke(target);
             ScanHorizontal(target);
         }
         if (center / PlayArea.Instance.Column < PlayArea.Instance.Row - 1) {
